@@ -1,11 +1,11 @@
 
-# $gitDomain = "https://github.com/";
+$gitDomain = "https://github.com/";
 $branch = "origin"; # upstream
 $thisFolder = Split-Path -Path (Get-Location) -Leaf;
 $getUser = git config --get user.name;
 
-# $repositoryURL = "$gitDomain$getUser/$thisFolder.git";
-$repositoryURL = git config --get remote.origin.url;
+$repositoryURL = "$gitDomain$getUser/$thisFolder.git";
+# $repositoryURL = git config --get remote.origin.url;
 
 Clear-Host;
 
@@ -30,7 +30,12 @@ git push -u $branch main
 
 
 
-
+# git init
+# git add README.md
+# git commit -m "first commit"
+# git branch -M main
+# git remote add origin https://github.com/Suebersson/mongodb_by_rest_api.git
+# git push -u origin main
 
 # ------------------ Outros comandos -------------------
 
