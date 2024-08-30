@@ -58,15 +58,15 @@ final class Collection implements CollectionMethods {
   T _generateException<T>(String message) => throw CollectionExeception(message);
 
   late final Uri 
-    _uriFindOne = Uri.parse('${db.endpoint}/action/findOne'), // post
-    _uriFind = Uri.parse('${db.endpoint}/action/find'), // post
-    _uriInsertOne = Uri.parse('${db.endpoint}/action/insertOne'), // post
-    _uriInsertMany = Uri.parse('${db.endpoint}/action/insertMany'), // post
-    _uriUpdateOne = Uri.parse('${db.endpoint}/action/updateOne'), // post
-    _uriUpdateMany = Uri.parse('${db.endpoint}/action/updateMany'), // post
-    _uriDeleteOne = Uri.parse('${db.endpoint}/action/deleteOne'), // post
-    _uriDeleteMany = Uri.parse('${db.endpoint}/action/deleteMany'), // post
-    _uriAggregate = Uri.parse('${db.endpoint}/action/aggregate'); // post
+    _uriFindOne = db.uriMethods.findOne, // post
+    _uriFind = db.uriMethods.find, // post
+    _uriInsertOne = db.uriMethods.insertOne, // post
+    _uriInsertMany = db.uriMethods.insertMany, // post
+    _uriUpdateOne = db.uriMethods.updateOne, // post
+    _uriUpdateMany = db.uriMethods.updateMany, // post
+    _uriDeleteOne = db.uriMethods.deleteOne, // post
+    _uriDeleteMany = db.uriMethods.deleteMany, // post
+    uriAggregate = db.uriMethods.aggregate; // post
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/aggregate
   @override

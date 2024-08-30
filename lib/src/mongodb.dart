@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import '../mongodb_by_rest_api.dart';
 import './collection.dart';
+import 'uri_methods.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -15,7 +16,7 @@ import './collection.dart';
 
 final class Mongodb {
   
-  const Mongodb({
+  Mongodb({
     required this.endpoint,
     required this.headers,
     required this.source,
@@ -32,6 +33,8 @@ final class Mongodb {
 
   Map<String, String> get copyHeaders => {...headers};
   Map<String, dynamic> get copySource => {...source};
+
+  late final UriMethods uriMethods = UriMethods(endpoint);
 
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#bearer-authentication
   factory Mongodb.authentication({
