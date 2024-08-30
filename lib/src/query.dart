@@ -16,6 +16,10 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   String get projectionJson => projection.toJson;
   Uint8List get projectionBytes => projection.toJson.utf8ToBytes;
 
+  final Map<String, int> sort = {};
+  String get sortJson => sort.toJson;
+  Uint8List get sortBytes => sort.toJson.utf8ToBytes;
+
   Object? update;
   String get updateJson {
     if(update is List || update is Map) {
@@ -265,6 +269,14 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
     return this;
   }
 
+  /// reordenar os campos
+  Query $sort(List<String> fields) {
+    sort
+      ..clear()
+      ..addAll({for (String key in fields) key: 1});
+    return this;
+  }
+
   /// Objetos esperados [List] ou [Map] para criar a query
   /// 
   /// final Query where =  query.$free([query.$gt(2, field: 'carrier.fee'), query.$set({ "price": 15.89})]);
@@ -334,165 +346,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   
 }
 
-
 enum TypeQuery {
   filter,
   free;
-
-  // void addFilter({required Map<String, dynamic> source, required Query query}) {
-  //   if (this == TypeQuery.filter && query.filter.isNotEmpty) {
-  //     source.addAll({'filter': query.filter});
-  //   } else {
-  //     if (query.free is List || query.free is Map) {
-  //       source.addAll({'filter': query.free});
-  //     }
-  //   }
-  // }
-
 }
-
-
-
-
-
-
-
-/*
-import 'dart:typed_data' show Uint8List;
-
-import '../converters.dart';
-import './operators/logical.dart';
-import './operators/selectors.dart';
-
-Query get query => Query(); 
-
-final class Query implements Selectors, Logical {
-
-  final Map<String, dynamic> filter = {};
-  String get filterJson => filter.toJson;
-  Uint8List get filterBytes => filter.toJson.utf8ToBytes;
-
-  final Map<String, int> projection = {};
-  String get projectionJson => projection.toJson;
-  Uint8List get projectionBytes => projection.toJson.utf8ToBytes;
-
-  @override
-  Query $eq(String field, value) {
-    filter.update(
-      field, 
-      (_) => value,
-      ifAbsent: () => value,
-    );
-    return this;
-  }
-  
-  @override
-  Query $gt(String field, value) {
-
-    final Map<String, dynamic> search = {field: {'\$gt': value}};
-
-    if (filter.isEmpty || !filter.containsKey('\$and')) {
-      filter.addAll(search);
-    } else {
-      filter.update(
-        '\$and', (value) {
-          (value as List).add(search);
-          return value;
-        },
-        ifAbsent: () => [search],
-      );
-    }
-
-    return this;
-  }
-  
-  @override
-  Query $gte(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $in(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $lt(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $lte(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $ne(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $nin(String field, value) {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $and(Query and) {
-
-    final List<Map<String, dynamic>> search = and.filter.entries
-      .map((e) => {e.key: e.value}).toList();
-
-    filter.update(
-      '\$and', (value) {
-        (value as List).addAll(search);
-        return value;
-      },
-      ifAbsent: () => search,
-    );
-
-    return this;
-
-  }
-  
-  @override
-  Query $nor() {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $not() {
-    throw UnimplementedError();
-  }
-  
-  @override
-  Query $or(Query or) {
-
-    if (filter.isNotEmpty) {
-
-      final List<dynamic> data = [
-        {'\$and': filter.entries.map((e) => {e.key: e.value}).toList()},
-        or.filter,
-      ];
-
-      filter
-        ..clear()
-        ..addAll({'\$or': data});
-
-    }
-
-    return this;
-
-  }
-
-  Query fields(List<String> fields) {
-
-    projection
-      ..clear()
-      ..addAll({for (String key in fields) key: 1});
-
-    return this;
-
-  }
-  
-}
-*/

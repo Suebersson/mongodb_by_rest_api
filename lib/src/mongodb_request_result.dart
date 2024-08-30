@@ -59,7 +59,11 @@ final class MongoDBRequestResult {
     headers: {},
   );
 
-  MongoDBRequestData get dataReceived => MongoDBRequestData.fromMap(bodyData);
+  MongoDBRequestData get dataReceived => MongoDBRequestData.fromMap({
+    'success': success,
+    'statusCode': statusCode,
+    ...bodyData,
+  });
 
   factory MongoDBRequestResult.errorInRequest(String message) {
     return undefinedResult.copyWith(body: message);

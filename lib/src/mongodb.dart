@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import '../mongodb_by_rest_api.dart';
 import './collection.dart';
-import 'uri_methods.dart';
+import './uri_methods.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -177,45 +177,3 @@ final class Mongodb {
   }
 
 }
-
-
-
-
-/*
-final class Mongodb {
-  
-  const Mongodb({
-    required this.apiKey, 
-    required this.endpoint,
-    required this.cluster, 
-    required this.dataBaseName,
-  });
-
-  final String apiKey, endpoint, cluster, dataBaseName;
-
-  factory Mongodb.authorization({required String endpoint, }) {
-
-    return throw '';
-  }
-
-  Collection collection(String name) {
-    return Collection(name: name, db: this);
-  }
-
-  Future<void> createCollections(List<Collection> list) async{
-
-    final List<String> collectionsInDB = [];
-
-    list.removeWhere((c) => collectionsInDB.contains(c.name));
-
-    if (list.isNotEmpty) {
-      await Future.wait(List<Future<void>>.generate(list.length, (index) async{
-        
-      },),);
-    }
-    
-  }
-
-}
-
-*/

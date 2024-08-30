@@ -9,6 +9,7 @@ import './mongodb.dart';
 import './converters/extension.dart';
 import './client_service.dart';
 import './mongodb_request_result.dart';
+import './mongodb_request_data.dart';
 
 final class Collection implements CollectionMethods {
   
@@ -66,30 +67,84 @@ final class Collection implements CollectionMethods {
     _uriUpdateMany = db.uriMethods.updateMany, // post
     _uriDeleteOne = db.uriMethods.deleteOne, // post
     _uriDeleteMany = db.uriMethods.deleteMany, // post
-    uriAggregate = db.uriMethods.aggregate; // post
+    _uriAggregate = db.uriMethods.aggregate; // post
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/aggregate
   @override
   Future<Map<String, dynamic>?> aggregate(Query query) {
+
+    final Map<String, dynamic> body = sourceRequest;
+
+    if (query.sort.isNotEmpty) {
+      body.addAll({'sort': query.sort});
+    }
+
     throw UnimplementedError();
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
   @override
-  Future<Map<String, dynamic>?> deleteMany(Query query) {
+  Future<Deleted> deleteMany(Query query) {
+
+    final Map<String, dynamic> body = sourceRequest;
+
     throw UnimplementedError();
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Map<String, dynamic>?> deleteOne(Query query) {
+  Future<Deleted> deleteOne(Query query) {
+
+    final Map<String, dynamic> body = sourceRequest;
+
     throw UnimplementedError();
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
   @override
-  Future<Map<String, dynamic>?> find(Query query, {int? limit}) {
-    throw UnimplementedError();
+  Future<List<Map<String, dynamic>>> find(Query query, {TypeQuery type = TypeQuery.filter, int? limit}) async{
+    // // todos os documentos com apenas os campos escificados
+    // final Query where = query.$projection(['title', 'country', 'uf']);
+    // final List<Map<String, dynamic>> data = await events.find(where);
+    // print(data.length);
+
+    // // todos os documentos
+    // final List<Map<String, dynamic>> data = await events.find(query);
+    // print(data.length);
+
+    final Map<String, dynamic> body = sourceRequest;
+
+    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
+      body.addAll({'filter': query.filter});
+    } else {
+      if (query.free is List || query.free is Map) {
+        body.addAll({'filter': query.free});
+      }
+    }
+
+    if (query.projection.isNotEmpty) {
+      body.addAll({'projection': query.projection});
+    }
+
+    if (limit is int) {
+      body.addAll({'limit': limit});
+    }
+
+    if (query.sort.isNotEmpty) {
+      body.addAll({'sort': query.sort});
+    }
+    
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriFind,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    // return [...result.dataReceived.document];
+    return result.dataReceived.parseDocumentsList();
+
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
@@ -110,6 +165,10 @@ final class Collection implements CollectionMethods {
       body.addAll({'projection': query.projection});
     }
 
+    if (query.sort.isNotEmpty) {
+      body.addAll({'sort': query.sort});
+    }
+
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
     final MongoDBRequestResult result = await ClientService.post(
@@ -118,16 +177,14 @@ final class Collection implements CollectionMethods {
       headers: headersRequest(bodyBytes),
     );
 
-    return result.dataReceived.document;
-
-    // return headers;
-    // return body;
+    // return result.dataReceived.document;
+    return result.dataReceived.parseDocumentMapOrNull();
 
   }
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
   @override
-  Future<Map<String, dynamic>?> insertMany({required Query query, required List<Map<String, dynamic>> documents}) {
+  Future<Inserted> insertMany({required Query query, required List<Map<String, dynamic>> documents}) {
    
     final Map<String, dynamic> body = sourceRequest;
 
@@ -138,7 +195,7 @@ final class Collection implements CollectionMethods {
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Map<String, dynamic>?> insertOne({required Query query, required Map<String, dynamic> document}) {
+  Future<Inserted> insertOne({required Query query, required Map<String, dynamic> document}) {
     
     final Map<String, dynamic> body = sourceRequest;
 
@@ -150,19 +207,47 @@ final class Collection implements CollectionMethods {
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateMany
   @override
-  Future<Map<String, dynamic>?> updateMany(Query query, {bool? upsert}) {
+  Future<Updated> updateMany({
+    required Query query, 
+    required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,}) async{
 
-    // if (query.update is List || query.update is Map) {
-    //   body.addAll({'update': query.update});
-    // }
+    final Map<String, dynamic> body = sourceRequest;
 
-    throw UnimplementedError();
+    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
+      body.addAll({'filter': query.filter});
+    } else {
+      if (query.free is List || query.free is Map) {
+        body.addAll({'filter': query.free});
+      }
+    }
+
+    if (upsert is bool) {
+      body.addAll({'upsert': upsert});
+    }
+
+    body.update(
+      'update', 
+      (_) => {'\$set': data},
+      ifAbsent: () => {'\$set': data},
+    );
+
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriUpdateMany,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.updated;
+
   }
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Map<String, dynamic>?> updateOne({
-    required Query query, required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,}) {
+  Future<Updated> updateOne({
+    required Query query, 
+    required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,}) async{
     
     final Map<String, dynamic> body = sourceRequest;
 
@@ -174,15 +259,25 @@ final class Collection implements CollectionMethods {
       }
     }
 
-    if (query.update is List || query.update is Map) {
-      body.addAll({'update': query.update});
-    }
-
     if (upsert is bool) {
       body.addAll({'upsert': upsert});
     }
 
-    throw UnimplementedError();
+    body.update(
+      'update', 
+      (_) => {'\$set': data},
+      ifAbsent: () => {'\$set': data},
+    );
+
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriUpdateOne,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.updated;
 
   }
   
