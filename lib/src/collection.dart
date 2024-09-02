@@ -71,33 +71,74 @@ final class Collection implements CollectionMethods {
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/aggregate
   @override
-  Future<Map<String, dynamic>?> aggregate(Query query) {
+  Future<List<Map<String, dynamic>>> aggregate(List<Map<String, dynamic>> pipeline) async{
 
     final Map<String, dynamic> body = sourceRequest;
 
-    if (query.sort.isNotEmpty) {
-      body.addAll({'sort': query.sort});
-    }
+    body.addAll({'pipeline': pipeline});
 
-    throw UnimplementedError();
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriAggregate,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.parseDocumentsList();
+
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
   @override
-  Future<Deleted> deleteMany(Query query) {
+  Future<Deleted> deleteMany({required Query query, TypeQuery type = TypeQuery.filter}) async{
 
     final Map<String, dynamic> body = sourceRequest;
+    
+    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
+      body.addAll({'filter': query.filter});
+    } else {
+      if (query.free is List || query.free is Map) {
+        body.addAll({'filter': query.free});
+      }
+    }
 
-    throw UnimplementedError();
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriDeleteMany,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.deleted;
+
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Deleted> deleteOne(Query query) {
+  Future<Deleted> deleteOne({required Query query, TypeQuery type = TypeQuery.filter}) async{
 
     final Map<String, dynamic> body = sourceRequest;
+    
+    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
+      body.addAll({'filter': query.filter});
+    } else {
+      if (query.free is List || query.free is Map) {
+        body.addAll({'filter': query.free});
+      }
+    }
 
-    throw UnimplementedError();
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriDeleteOne,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.deleted;
+
   }
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
@@ -184,24 +225,41 @@ final class Collection implements CollectionMethods {
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
   @override
-  Future<Inserted> insertMany({required Query query, required List<Map<String, dynamic>> documents}) {
+  Future<InsertedMany> insertMany(List<Map<String, dynamic>> documents) async{
    
     final Map<String, dynamic> body = sourceRequest;
 
     body.addAll({'documents': documents});
     
-    throw UnimplementedError();
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriInsertMany,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.insertedMany;
+    
   }
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Inserted> insertOne({required Query query, required Map<String, dynamic> document}) {
+  Future<InsertedOne> insertOne(Map<String, dynamic> document) async{
     
     final Map<String, dynamic> body = sourceRequest;
 
     body.addAll({'document': document});
 
-    throw UnimplementedError();
+    final Uint8List bodyBytes = body.toJson.utf8ToBytes;
+
+    final MongoDBRequestResult result = await ClientService.post(
+      uri: _uriInsertOne,
+      body: bodyBytes,
+      headers: headersRequest(bodyBytes),
+    );
+
+    return result.dataReceived.insertedOne;
     
   }
 
@@ -225,11 +283,7 @@ final class Collection implements CollectionMethods {
       body.addAll({'upsert': upsert});
     }
 
-    body.update(
-      'update', 
-      (_) => {'\$set': data},
-      ifAbsent: () => {'\$set': data},
-    );
+    body.addAll({'update': {'\$set': data}});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
@@ -263,11 +317,7 @@ final class Collection implements CollectionMethods {
       body.addAll({'upsert': upsert});
     }
 
-    body.update(
-      'update', 
-      (_) => {'\$set': data},
-      ifAbsent: () => {'\$set': data},
-    );
+    body.addAll({'update': {'\$set': data}});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
@@ -278,6 +328,54 @@ final class Collection implements CollectionMethods {
     );
 
     return result.dataReceived.updated;
+
+  }
+  
+
+  /// quantidade total dos documentos, sem filtro
+  /// 
+  /// final int count = await events.amountOfDocuments();
+  /// 
+  /// quantidade total de documentos que corresponde ao filtro
+  /// 
+  /// final int count = await events.amountOfDocuments({
+  ///   'country': 'BR', // ou 'country': {'\$eq': 'BR'},
+  ///   'uf': 'RJ', // ou 'uf': {'\$eq': 'RJ'} 
+  /// });
+  @override
+  Future<int> amountOfDocuments([Map<String, dynamic>? match]) async{
+    // quantidade de documentos existentes
+    /*
+      [{'\$count': 'count'}]
+    */
+
+    // quantidade de documentos filtrados
+    /*
+      [
+        {
+          '\$match': {
+            'country': 'BR',
+            'uf': 'RJ'
+          }
+        },
+        {
+          '\$count': 'count',
+        },
+      ]
+    */
+
+    final List<Map<String, dynamic>> pipeline = [{'\$count': 'count'}];
+
+    if (match is Map<String, dynamic> && match.isNotEmpty) {
+      pipeline.insert(0, {'\$match': match});
+    }
+
+    final List<Map<String, dynamic>> data = await aggregate(pipeline);
+
+    return data.firstWhere(
+      (m) => m.containsKey('count'),
+      orElse: () => {'count': 0},
+    )['count'] ?? 0;
 
   }
   

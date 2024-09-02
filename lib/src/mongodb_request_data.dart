@@ -2,7 +2,8 @@ import 'dart:developer' show log;
 
 typedef Updated = ({bool requestSuccess, int matchedCount, int modifiedCount});
 typedef Deleted = ({bool requestSuccess, int deletedCount});
-typedef Inserted = ({bool requestSuccess, List<String> ids});
+typedef InsertedMany = ({bool requestSuccess, List<String> ids});
+typedef InsertedOne = ({bool requestSuccess, String id});
 
 final class MongoDBRequestData {
 
@@ -43,17 +44,8 @@ final class MongoDBRequestData {
 
   late final Updated updated = (requestSuccess: requestSuccess, matchedCount: matchedCount, modifiedCount: modifiedCount);
   late final Deleted deleted = (requestSuccess: requestSuccess, deletedCount: deletedCount);
-  late final Inserted inserted = _inserted();
-
-  Inserted _inserted() {
-    if (insertedIds.isNotEmpty) {
-      return (requestSuccess: requestSuccess, ids: insertedIds);
-    } else if(insertedId.isNotEmpty) {
-      return (requestSuccess: requestSuccess, ids: [insertedId]);
-    } else {
-      return (requestSuccess: requestSuccess, ids: _emptyListString);
-    }
-  }
+  late final InsertedMany insertedMany = (requestSuccess: requestSuccess, ids: insertedIds);
+  late final InsertedOne insertedOne = (requestSuccess: requestSuccess, id: insertedId);
 
   List<Map<String, dynamic>> parseDocumentsList() {
     if (document is List<dynamic> && document.isNotEmpty) {
@@ -89,6 +81,12 @@ final class MongoDBRequestData {
   factory MongoDBRequestData.fromMap(Map<String, dynamic> map) {
 
     try {
+
+      map.update(
+        'insertedIds', 
+        (ids) => <String>[...ids],
+        ifAbsent: () => _emptyListString,
+      );
 
       return MongoDBRequestData(
         requestSuccess: map['success'] ?? false,

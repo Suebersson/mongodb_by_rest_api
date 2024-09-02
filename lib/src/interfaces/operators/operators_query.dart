@@ -19,6 +19,6 @@ abstract interface class OperatorsQuery {
   Query $nor(List<dynamic> values);
   Query $or(List<Query> or);
 
-  Query $exists(String field, bool value);
+  Query $exists(String field, [bool value = false]);
 
 }

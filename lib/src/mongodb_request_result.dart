@@ -2,6 +2,7 @@ import 'dart:developer' show log;
 
 import './converters/extension.dart';
 import './mongodb_request_data.dart';
+import './converters/convert_json.dart';
 
 final class MongoDBRequestResult {
   
@@ -30,6 +31,15 @@ final class MongoDBRequestResult {
         stackTrace: stackTrace, 
       );
       throw MongoDBRequestResultExeception(message);
+    } on ConvertJsonExeception catch (error, stackTrace) {
+      log(
+        error.message,
+        name: '$MongoDBRequestResult > bodyData',
+        error: error,
+        stackTrace: stackTrace, 
+      );
+      // throw MongoDBRequestResultExeception(error.message);
+      return {};
     } catch (error, stackTrace) {
       final String message = 'Erro não tratado ao tentar converter o json[body] para uma Map<String, dynamic>';
       log(

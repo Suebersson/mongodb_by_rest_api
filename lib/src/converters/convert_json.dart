@@ -52,8 +52,10 @@ abstract final class ConvertJson {
     return json.encode(
       object, 
       toEncodable: (dynamic object) {
-        if (object is DateTime || object is Enum) {
+        if (object is Enum) {
           return object.toString();
+        } else if (object is DateTime) {
+          return object.toIso8601String();
         } else if (object is Query) {
           return object.filter;
         } else {
@@ -77,7 +79,7 @@ abstract final class ConvertJson {
       // A string é vazia ou é icompatível com formato JSON
       return alternativeValue.call();
     } on ConvertJsonExeception {
-      // A string é vazia ou é icompatível com formato JSON
+      // A string é vazia ou é incompatível com formato JSON
       return alternativeValue.call();
     } catch (_) {
       // Ocorreu algum erro não tratados ao tentar decodificar a string para o formato JSON

@@ -10,11 +10,10 @@ abstract interface class CollectionMethods {
   Future<Map<String, dynamic>?> findOne(Query query, {TypeQuery type = TypeQuery.filter});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertOne
-  Future<Inserted> insertOne({required Query query, required Map<String, dynamic> document});
+  Future<InsertedOne> insertOne(Map<String, dynamic> document);
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
-  Future<Inserted> insertMany({
-    required Query query, required List<Map<String, dynamic>> documents,});
+  Future<InsertedMany> insertMany(List<Map<String, dynamic>> documents);
 
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   /// https://www.mongodb.com/pt-br/docs/manual/reference/method/db.collection.update/#std-label-upsert-behavior
@@ -27,12 +26,14 @@ abstract interface class CollectionMethods {
     required Query query, required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/deleteOne
-  Future<Deleted> deleteOne(Query query);
+  Future<Deleted> deleteOne({required Query query, TypeQuery type = TypeQuery.filter});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/deleteMany 
-  Future<Deleted> deleteMany(Query query);
+  Future<Deleted> deleteMany({required Query query, TypeQuery type = TypeQuery.filter});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/aggregate
-  Future<Map<String, dynamic>?> aggregate(Query query);
+  Future<List<Map<String, dynamic>>> aggregate(List<Map<String, dynamic>> pipeline);
+
+  Future<int> amountOfDocuments([Map<String, dynamic>? match]);
   
 }

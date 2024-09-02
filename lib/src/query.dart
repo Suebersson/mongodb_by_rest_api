@@ -20,16 +20,6 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   String get sortJson => sort.toJson;
   Uint8List get sortBytes => sort.toJson.utf8ToBytes;
 
-  Object? update;
-  String get updateJson {
-    if(update is List || update is Map) {
-      return update?.toJson ?? '{}';
-    } else {
-      return '{}';
-    }
-  }
-  Uint8List get updateBytes => updateJson.utf8ToBytes;
-
   Object? free;
   bool isFree = false;
   String get freeJson {
@@ -265,7 +255,8 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   Query $projection(List<String> fields) {
     projection
       ..clear()
-      ..addAll({for (String key in fields) key: 1});
+      ..addAll({for (String key in fields) key: 1})
+      ..putIfAbsent('_id', () => 0);
     return this;
   }
 
@@ -292,29 +283,6 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
     return this;
   }
 
-  /// final Query where = query.$update(query.$gt(2, field: 'carrier.fee').$set({ "price": 15.89}));
-  /// 
-  /// print(where.updateJson); // {"carrier.fee":{"$gt":2},"$set":{"price":15.89}}
-  ///
-  /// final Query where = query.$update(query.$free([query.$gt(2, field: 'carrier.fee'), query.$set({ "price": 15.89})]));
-  ///
-  /// print(where.updateJson); // [{"carrier.fee":{"$gt":2}},{"$set":{"price":15.89}}]
-  Query $update(dynamic query) {
-
-    if (query is Query) {
-      if (query.isFree) {
-        update = query.free;
-      } else {
-        update = query.filter;
-      }
-    } else if(query is List || query is Map) {
-      update = query;
-    }
-
-    isFree = query.isFree;
-    return this;
-  }
-  
   /// final Query where = query.$set({'elements.name': 'João', 'item': 20, 'column': 4}); 
   /// print(where.filterJson); // {"$set":{"elements.name":"João","item":20,"column":4}}
   /// 
@@ -334,8 +302,12 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   /// final Query where = query.$nor([{'item': 2}, {'price': 2.87}, query.$exists('price', false).filter]);
   ///
   /// print(where.filterJson); // {"$nor":[{"item":2},{"price":2.87},{"price":{"$exists":false}}]}
+  /// 
+  /// final Query where = query.$exists('title');
+  /// 
+  /// {"title":{"$exists":false}}
   @override
-  Query $exists(String field, bool value) {
+  Query $exists(String field, [bool value = false]) {
     filter.update(
       field, 
       (_) => {'\$exists': value},
