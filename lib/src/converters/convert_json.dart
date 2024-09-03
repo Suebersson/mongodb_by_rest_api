@@ -55,7 +55,8 @@ abstract final class ConvertJson {
         if (object is Enum) {
           return object.toString();
         } else if (object is DateTime) {
-          return object.toIso8601String();
+          // return object.toIso8601String();
+          return {'\$date':object.toIso8601String()};
         } else if (object is Query) {
           return object.filter;
         } else {

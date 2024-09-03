@@ -331,7 +331,6 @@ final class Collection implements CollectionMethods {
 
   }
   
-
   /// quantidade total dos documentos, sem filtro
   /// 
   /// final int count = await events.amountOfDocuments();
