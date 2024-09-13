@@ -16,6 +16,8 @@ abstract final class ConvertJson {
       return throw const ConvertJsonExeception('Não é possível decodificar e criar um objeto com a string vazia');
     }
 
+    encoded = adjustReformattedJson(encoded);
+
     return json.decode(
       encoded, 
       reviver: (key, value) {
@@ -101,6 +103,13 @@ abstract final class ConvertJson {
       // Ocorreu algum erro não tratados ao tentar decodificar a string para o formato JSON
       return null;
     }
+  }
+
+  /// Ajustar strings json formatada dentro de outro json
+  /// 
+  /// [{"item":"{\"contains\":\"false\"}"}]
+  static String adjustReformattedJson(String json) {
+    return json.replaceAll('"{\\"', '{"').replaceAll('\\"}"', '"}').replaceAll('\\"', '"');
   }
 
 }

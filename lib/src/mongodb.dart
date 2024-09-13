@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import '../mongodb_by_rest_api.dart';
 import './collection.dart';
 import './uri_methods.dart';
+import 'localhost/exception.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -149,6 +150,28 @@ final class Mongodb {
         'dataSource': cluster,
       }),
     );
+  }
+
+  factory Mongodb.localhost({
+    required String dataBaseName,
+    int port = 27017, 
+  }) {
+
+    throw MongoDBLocalhostExeception('Implementação pendente: http://localhost:$port/$dataBaseName');
+
+    // return Mongodb(
+    //   endpoint: 'http://localhost:$port/$dataBaseName',
+    //   signPayload: false,
+    //   headers: Map.unmodifiable({
+    //     'Content-Type': 'application/json',
+    //     'Accept': 'application/json',
+    //   }), 
+    //   source: Map.unmodifiable({
+    //     'database': dataBaseName,
+    //     'port': port,
+    //   }),
+    // );
+
   }
 
   Collection collection(String name) => Collection(name: name, db: this);
