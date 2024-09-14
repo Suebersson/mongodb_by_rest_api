@@ -1,9 +1,8 @@
-import 'dart:typed_data';
+import 'dart:typed_data' show Uint8List;
 
-import '../mongodb_by_rest_api.dart';
 import './collection.dart';
 import './uri_methods.dart';
-import 'localhost/exception.dart';
+import './exception.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -157,7 +156,7 @@ final class Mongodb {
     int port = 27017, 
   }) {
 
-    throw MongoDBLocalhostExeception('Implementação pendente: http://localhost:$port/$dataBaseName');
+    throw MongoDBExeception('Implementação pendente: http://localhost:$port/$dataBaseName');
 
     // return Mongodb(
     //   endpoint: 'http://localhost:$port/$dataBaseName',
@@ -178,15 +177,17 @@ final class Mongodb {
 
   Future<void> createCollections(List<Collection> list) async{
 
-    final List<String> collectionsInDB = [];
+    // final List<String> collectionsInDB = [];
 
-    list.removeWhere((c) => collectionsInDB.contains(c.name));
+    // list.removeWhere((c) => collectionsInDB.contains(c.name));
 
-    if (list.isNotEmpty) {
-      await Future.wait(List<Future<void>>.generate(list.length, (index) async{
+    // if (list.isNotEmpty) {
+    //   await Future.wait(List<Future<void>>.generate(list.length, (index) async{
         
-      },),);
-    }
+    //   },),);
+    // }
+
+    throw const MongoDBExeception('Implementação pendente');
     
   }
 
@@ -196,6 +197,8 @@ final class Mongodb {
     required String fieldName, 
     int expireAfterSeconds = 60,
   }) async{
+
+    throw const MongoDBExeception('Implementação pendente');
 
   }
 

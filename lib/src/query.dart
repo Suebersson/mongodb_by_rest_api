@@ -53,7 +53,6 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
         ifAbsent: () => value,
       );      
     }
-
     return this;
   }
   
@@ -316,6 +315,11 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
     return this;
   }
   
+  Query $manualQuery(Map<String, dynamic> query) {
+    filter.addAll(query);
+    return this;
+  }
+
 }
 
 enum TypeQuery {
