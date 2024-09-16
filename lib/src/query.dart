@@ -16,6 +16,10 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
   String get projectionJson => projection.toJson;
   Uint8List get projectionBytes => projection.toJson.utf8ToBytes;
 
+  final Map<String, dynamic> update = {};
+  String get updateJson => update.toJson;
+  Uint8List get updateBytes => update.toJson.utf8ToBytes;
+
   final Map<String, int> sort = {};
   String get sortJson => sort.toJson;
   Uint8List get sortBytes => sort.toJson.utf8ToBytes;
@@ -319,6 +323,38 @@ final class Query implements OperatorsQuery, OperatorsUpdate {
     filter.addAll(query);
     return this;
   }
+  
+  @override
+  Query $inc({required String field, value}) {
+    update.update(
+      '\$inc', 
+      (data) {
+        (data as Map<String, dynamic>).addAll({field: value});
+        return data;
+      },
+      ifAbsent: () => {field: value},
+    );
+    return this;
+  }
+  
+  @override
+  Query $pull({required String field, value}) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  Query $push({required String field, value}) {
+    throw UnimplementedError();
+  }
+
+
+  // var f = ModifierBuilder().push('confirmedPresences', {}).inc('confirmedPresencesLength', 1);
+
+  // print(f.map);
+  
+  // {$push: {confirmedPresences: {}}, $inc: {confirmedPresencesLength: 1}}
+
+  
 
 }
 
