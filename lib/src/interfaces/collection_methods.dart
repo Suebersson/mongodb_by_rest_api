@@ -1,13 +1,14 @@
 import '../mongodb_request_data.dart';
-import '../query.dart';
 
 abstract interface class CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
-  Future<List<Map<String, dynamic>>> find(Query query, {TypeQuery type = TypeQuery.filter, int? limit});
+  Future<List<Map<String, dynamic>>> find(
+    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
-  Future<Map<String, dynamic>?> findOne(Query query, {TypeQuery type = TypeQuery.filter});
+  Future<Map<String, dynamic>?> findOne(
+    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertOne
   Future<InsertedOne> insertOne(Map<String, dynamic> document);
@@ -18,18 +19,18 @@ abstract interface class CollectionMethods {
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   /// https://www.mongodb.com/pt-br/docs/manual/reference/method/db.collection.update/#std-label-upsert-behavior
   Future<Updated> updateOne({
-    required Query query, required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,});
+    required dynamic filter, required dynamic update, bool? upsert,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateMany
   /// https://www.mongodb.com/pt-br/docs/manual/reference/method/db.collection.update/#std-label-upsert-behavior
   Future<Updated> updateMany({
-    required Query query, required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,});
+    required dynamic filter, required dynamic update, bool? upsert,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/deleteOne
-  Future<Deleted> deleteOne({required Query query, TypeQuery type = TypeQuery.filter});
+  Future<Deleted> deleteOne(dynamic filter);
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/deleteMany 
-  Future<Deleted> deleteMany({required Query query, TypeQuery type = TypeQuery.filter});
+  Future<Deleted> deleteMany(dynamic filter);
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/aggregate
   Future<List<Map<String, dynamic>>> aggregate(List<Map<String, dynamic>> pipeline);

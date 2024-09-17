@@ -1,10 +1,7 @@
-// ignore_for_file: unused_field, unused_local_variable
-
 import 'dart:typed_data' show Uint8List;
 import 'package:crypto/crypto.dart';
 
 import './interfaces/collection_methods.dart';
-import './query.dart';
 import './mongodb.dart';
 import './converters/extension.dart';
 import './client_service.dart';
@@ -91,17 +88,11 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertMany
   @override
-  Future<Deleted> deleteMany({required Query query, TypeQuery type = TypeQuery.filter}) async{
+  Future<Deleted> deleteMany(dynamic filter) async{
 
     final Map<String, dynamic> body = sourceRequest;
     
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
-    }
+    body.addAll({'filter': filter});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
@@ -117,17 +108,11 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
-  Future<Deleted> deleteOne({required Query query, TypeQuery type = TypeQuery.filter}) async{
+  Future<Deleted> deleteOne(dynamic filter) async{
 
     final Map<String, dynamic> body = sourceRequest;
     
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
-    }
+    body.addAll({'filter': filter});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
@@ -143,10 +128,12 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
   @override
-  Future<List<Map<String, dynamic>>> find(Query query, {TypeQuery type = TypeQuery.filter, int? limit}) async{
+  Future<List<Map<String, dynamic>>> find(
+    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,}) async{
     // // todos os documentos com apenas os campos escificados
     // final Query where = query.$projection(['title', 'country', 'uf']);
-    // final List<Map<String, dynamic>> data = await events.find(where);
+    // final List<Map<String, dynamic>> data = await events.find(query, projection: where.operators);
+    // print(where.operators);
     // print(data.length);
 
     // // todos os documentos
@@ -155,24 +142,18 @@ final class Collection implements CollectionMethods {
 
     final Map<String, dynamic> body = sourceRequest;
 
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
+    body.addAll({'filter': filter});
+
+    if (projection?.isNotEmpty ?? false) {
+      body.addAll({'projection': projection});
     }
 
-    if (query.projection.isNotEmpty) {
-      body.addAll({'projection': query.projection});
+    if (sort?.isNotEmpty ?? false) {
+      body.addAll({'sort': sort});
     }
 
     if (limit is int) {
       body.addAll({'limit': limit});
-    }
-
-    if (query.sort.isNotEmpty) {
-      body.addAll({'sort': query.sort});
     }
     
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
@@ -190,24 +171,19 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
   @override
-  Future<Map<String, dynamic>?> findOne(Query query, {TypeQuery type = TypeQuery.filter}) async {
+  Future<Map<String, dynamic>?> findOne(
+    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort,}) async {
 
     final Map<String, dynamic> body = sourceRequest;
 
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
+    body.addAll({'filter': filter});
+
+    if (projection?.isNotEmpty ?? false) {
+      body.addAll({'projection': projection});
     }
 
-    if (query.projection.isNotEmpty) {
-      body.addAll({'projection': query.projection});
-    }
-
-    if (query.sort.isNotEmpty) {
-      body.addAll({'sort': query.sort});
+    if (sort?.isNotEmpty ?? false) {
+      body.addAll({'sort': sort});
     }
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
@@ -266,24 +242,17 @@ final class Collection implements CollectionMethods {
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateMany
   @override
   Future<Updated> updateMany({
-    required Query query, 
-    required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,}) async{
+    required dynamic filter, required dynamic update, bool? upsert,}) async{
 
     final Map<String, dynamic> body = sourceRequest;
 
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
-    }
+    body.addAll({'filter': filter});
+
+    body.addAll({'update': update});
 
     if (upsert is bool) {
       body.addAll({'upsert': upsert});
     }
-
-    body.addAll({'update': {'\$set': data}});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 
@@ -300,24 +269,17 @@ final class Collection implements CollectionMethods {
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/updateOne
   @override
   Future<Updated> updateOne({
-    required Query query, 
-    required Map<String, dynamic> data, TypeQuery type = TypeQuery.filter, bool? upsert,}) async{
+    required dynamic filter, required dynamic update, bool? upsert,}) async{
     
     final Map<String, dynamic> body = sourceRequest;
 
-    if (type == TypeQuery.filter && query.filter.isNotEmpty) {
-      body.addAll({'filter': query.filter});
-    } else {
-      if (query.free is List || query.free is Map) {
-        body.addAll({'filter': query.free});
-      }
-    }
+    body.addAll({'filter': filter});
+
+    body.addAll({'update': update});
 
     if (upsert is bool) {
       body.addAll({'upsert': upsert});
     }
-
-    body.addAll({'update': {'\$set': data}});
 
     final Uint8List bodyBytes = body.toJson.utf8ToBytes;
 

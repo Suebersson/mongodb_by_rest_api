@@ -8,10 +8,11 @@ import './mongodb_request_result.dart';
 
 abstract final class ClientService {
 
+  static String getName = '$ClientService.get';
   static Future<MongoDBRequestResult> get({required Uri uri, Map<String, String>? headers}) {
 
     return _tryRequest(
-      name: '$ClientService.get', 
+      name: getName, 
       request: () async{
         
         final http.Response response = await http.get(uri, headers: headers);
@@ -28,11 +29,12 @@ abstract final class ClientService {
 
   }
 
+  static String postName = '$ClientService.post';
   static Future<MongoDBRequestResult> post({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: '$ClientService.post', 
+      name: postName, 
       request: () async{
 
         final http.Response response = await http.post(
@@ -54,11 +56,12 @@ abstract final class ClientService {
 
   }
 
+  static String putName = '$ClientService.put';
   static Future<MongoDBRequestResult> put({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: '$ClientService.put', 
+      name: putName, 
       request: () async{
         
         final http.Response response = await http.put(
@@ -80,11 +83,12 @@ abstract final class ClientService {
 
   }
 
+  static String deleteName = '$ClientService.delete';
   static Future<MongoDBRequestResult> delete({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: '$ClientService.delete',
+      name: deleteName,
       request: () async{
         
         final http.Response response = await http.delete(
@@ -106,10 +110,11 @@ abstract final class ClientService {
 
   }
 
+  static String headName = '$ClientService.head';
   static Future<MongoDBRequestResult> head({required Uri uri, Map<String, String>? headers,}) {
 
     return _tryRequest(
-      name: '$ClientService.head', 
+      name: headName, 
       request: () async{
         
         final http.Response response = await http.head(

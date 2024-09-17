@@ -86,12 +86,7 @@ final class MongoDBRequestResult {
   bool get isStatusCodeFamily400 => statusCode >= 400 && statusCode <= 499;
   bool get isStatusCodeFamily500 => statusCode >= 500 && statusCode <= 599;
 
-  bool get contentTypeIsApplicationJson {
-    return headers['content-type']?.contains('application/json') 
-      ?? headers['Content-type']?.contains('application/json') 
-      ?? headers['Content-Type']?.contains('application/json') 
-      ?? false;
-  }
+  bool get contentTypeIsApplicationJson => contentType.contains('application/json'); 
 
   factory MongoDBRequestResult.fromMap(Map<String, dynamic> map) {
     return MongoDBRequestResult(

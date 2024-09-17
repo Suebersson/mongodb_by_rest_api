@@ -60,7 +60,7 @@ abstract final class ConvertJson {
           // return object.toIso8601String();
           return {'\$date':object.toIso8601String()};
         } else if (object is Query) {
-          return object.filter;
+          return object.operators;
         } else {
           // Exeception que será emitida se o objeto for icompatível para o formato 
           // JSON [JsonUnsupportedObjectError] caso essa função seja defina

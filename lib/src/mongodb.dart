@@ -3,6 +3,7 @@ import 'dart:typed_data' show Uint8List;
 import './collection.dart';
 import './uri_methods.dart';
 import './exception.dart';
+import 'localhost/mongodb_localhost.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -22,6 +23,7 @@ final class Mongodb {
     required this.source,
     this.signPayload = false,
     this.secretKeyBytes,
+    this.localhost,
   });
 
   final String endpoint;
@@ -35,6 +37,8 @@ final class Mongodb {
   Map<String, dynamic> get copySource => {...source};
 
   late final UriMethods uriMethods = UriMethods(endpoint);
+
+  final MongodbLocalhost? localhost;
 
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#bearer-authentication
   factory Mongodb.authentication({
@@ -151,25 +155,24 @@ final class Mongodb {
     );
   }
 
-  factory Mongodb.localhost({
+  Future<Mongodb> connectInLocalhost({
     required String dataBaseName,
     int port = 27017, 
-  }) {
+  }) async{
 
-    throw MongoDBExeception('Implementação pendente: http://localhost:$port/$dataBaseName');
-
-    // return Mongodb(
-    //   endpoint: 'http://localhost:$port/$dataBaseName',
-    //   signPayload: false,
-    //   headers: Map.unmodifiable({
-    //     'Content-Type': 'application/json',
-    //     'Accept': 'application/json',
-    //   }), 
-    //   source: Map.unmodifiable({
-    //     'database': dataBaseName,
-    //     'port': port,
-    //   }),
-    // );
+    return Mongodb(
+      endpoint: 'http://localhost:$port/$dataBaseName',
+      signPayload: false,
+      headers: Map.unmodifiable({
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }),
+      source: Map.unmodifiable({
+        'database': dataBaseName,
+        'port': port,
+      }),
+      localhost: await MongodbLocalhost.connect(port),
+    );
 
   }
 
