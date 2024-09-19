@@ -326,11 +326,11 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   }
 
   @override
-  Query $match(Map<String, dynamic> query) {
+  Query $match(Map<String, dynamic> data) {
     operators.update(
       '\$match', 
-      (_) => operators,
-      ifAbsent: () => operators,
+      (_) => data,
+      ifAbsent: () => data,
     );
     return this;
   }
