@@ -3,13 +3,13 @@ import '../mongodb_request_data.dart';
 abstract interface class CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
-  Future<List<Map<String, dynamic>>> find(
-    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,});
+  Future<List<Map<String, dynamic>>> find({
+    dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,});
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
-  Future<Map<String, dynamic>?> findOne(
-    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort,});
-  
+  Future<Map<String, dynamic>?> findOne({
+    required dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort,});
+
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/insertOne
   Future<InsertedOne> insertOne(Map<String, dynamic> document);
   

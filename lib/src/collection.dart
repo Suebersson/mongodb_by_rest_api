@@ -128,11 +128,11 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
   @override
-  Future<List<Map<String, dynamic>>> find(
-    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,}) async{
+  Future<List<Map<String, dynamic>>> find({
+    dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,}) async{
     // // todos os documentos com apenas os campos escificados
     // final Query where = query.$projection(['title', 'country', 'uf']);
-    // final List<Map<String, dynamic>> data = await events.find(query, projection: where.operators);
+    // final List<Map<String, dynamic>> data = await events.find(projection: where.operators);
     // print(where.operators);
     // print(data.length);
 
@@ -171,8 +171,8 @@ final class Collection implements CollectionMethods {
   
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
   @override
-  Future<Map<String, dynamic>?> findOne(
-    dynamic filter, {Map<String, dynamic>? projection, Map<String, dynamic>? sort,}) async {
+  Future<Map<String, dynamic>?> findOne({
+    required dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort,}) async {
 
     final Map<String, dynamic> body = sourceRequest;
 
