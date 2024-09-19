@@ -62,7 +62,37 @@ abstract final class ConvertJson {
         } else if (object is Query) {
           return object.operators;
         } else if(object is RegExp) {
-          return {'\$regex': object.pattern, '\$options': 'i'};
+          // https://www.mongodb.com/pt-br/docs/v6.0/reference/operator/query/regex/
+          final Map<String, String> regex = {'\$regex': object.pattern};
+          if (object.isDotAll) {
+            regex.update(
+              '\$options', 
+              (options) => options += 's',
+              ifAbsent: () => 's',
+            );
+          }
+          if (!object.isCaseSensitive) {
+            regex.update(
+              '\$options', 
+              (options) => options += 'i',
+              ifAbsent: () => 'i',
+            );
+          }
+          if (object.isMultiLine) {
+            regex.update(
+              '\$options', 
+              (options) => options += 'm',
+              ifAbsent: () => 'm',
+            );
+          }
+          if (object.isUnicode) {
+            regex.update(
+              '\$options', 
+              (options) => options += 'u',
+              ifAbsent: () => 'u',
+            );
+          }
+          return regex;
         } else {
           // Exeception que será emitida se o objeto for icompatível para o formato 
           // JSON [JsonUnsupportedObjectError] caso essa função seja defina

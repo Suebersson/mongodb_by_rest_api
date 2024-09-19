@@ -334,5 +334,15 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
     );
     return this;
   }
+  
+  @override
+  Query $regex(String field, RegExp regExp) {
+    operators.update(
+      field, 
+      (_) => regExp,
+      ifAbsent: () => regExp,
+    );
+    return this;
+  }
 
 }

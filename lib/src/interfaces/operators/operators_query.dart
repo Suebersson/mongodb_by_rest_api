@@ -21,4 +21,6 @@ abstract interface class OperatorsQuery {
 
   Query $exists(String field, [bool value = false]);
 
+  Query $regex(String field, RegExp regExp);
+
 }
