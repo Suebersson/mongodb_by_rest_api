@@ -58,9 +58,11 @@ abstract final class ConvertJson {
           return object.toString();
         } else if (object is DateTime) {
           // return object.toIso8601String();
-          return {'\$date':object.toIso8601String()};
+          return {'\$date': object.toIso8601String()};
         } else if (object is Query) {
           return object.operators;
+        } else if(object is RegExp) {
+          return {'\$regex': object.pattern, '\$options': 'i'};
         } else {
           // Exeception que será emitida se o objeto for icompatível para o formato 
           // JSON [JsonUnsupportedObjectError] caso essa função seja defina
