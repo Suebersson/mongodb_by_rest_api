@@ -23,7 +23,6 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   // 
   // print(where.toJson); // {"createdAt":{"$gte":{"$date":"2022-01-01T00:00:00.000Z"},"$lt":{"$date":"2023-01-01T00:00:00.000Z"}}}
 
-
   /// final Query where = query.$eq('data.name', 'João');
   ///
   /// print(where.filterJson); // {"data.name":{"$eq":"João"}}
