@@ -4,6 +4,7 @@ import './converters/extension.dart';
 import './interfaces/operators/operators_query.dart';
 import './interfaces/operators/operators_update.dart';
 import './interfaces/operators/operators_aggregation.dart';
+import 'id_field.dart';
 
 Query get query => Query();
 
@@ -236,7 +237,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
     operators
       ..clear()
       ..addAll({for (String key in fields) key: 1})
-      ..putIfAbsent('_id', () => 0);
+      ..putIfAbsent(IdField.withUnderscore, () => 0);
     return this;
   }
 
