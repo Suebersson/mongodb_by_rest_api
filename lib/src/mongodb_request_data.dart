@@ -1,6 +1,6 @@
 import 'dart:developer' show log;
 
-typedef Updated = ({bool requestSuccess, int matchedCount, int modifiedCount});
+typedef Updated = ({bool requestSuccess, int matchedCount, int modifiedCount, String upsertedId});
 typedef Deleted = ({bool requestSuccess, int deletedCount});
 typedef InsertedMany = ({bool requestSuccess, List<String> ids});
 typedef InsertedOne = ({bool requestSuccess, String id});
@@ -14,6 +14,7 @@ final class MongoDBRequestData {
     required this.matchedCount,
     required this.modifiedCount,
     required this.insertedId,
+    required this.upsertedId,
     required this.insertedIds,
   });
 
@@ -28,7 +29,7 @@ final class MongoDBRequestData {
     modifiedCount; /// fields/campos modificados
 
   /// id do documento inserido
-  final String insertedId;
+  final String insertedId, upsertedId;
 
   /// Lista de ids dos documentos inseridos
   final List<String> insertedIds;
@@ -42,7 +43,11 @@ final class MongoDBRequestData {
   static final int _count = 0;
   static final String _emptyString = '';
 
-  late final Updated updated = (requestSuccess: requestSuccess, matchedCount: matchedCount, modifiedCount: modifiedCount);
+  late final Updated updated = (
+    requestSuccess: requestSuccess, 
+    matchedCount: matchedCount, 
+    modifiedCount: modifiedCount, 
+    upsertedId: upsertedId);
   late final Deleted deleted = (requestSuccess: requestSuccess, deletedCount: deletedCount);
   late final InsertedMany insertedMany = (requestSuccess: requestSuccess, ids: insertedIds);
   late final InsertedOne insertedOne = (requestSuccess: requestSuccess, id: insertedId);
@@ -95,6 +100,7 @@ final class MongoDBRequestData {
         matchedCount: map['matchedCount'] ?? _count,
         modifiedCount: map['modifiedCount'] ?? _count,
         insertedId: map['insertedId'] ?? _emptyString,
+        upsertedId: map['upsertedId'] ?? _emptyString,
         insertedIds: map['insertedIds'] ?? _emptyListString,
       );
 
