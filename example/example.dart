@@ -20,7 +20,7 @@ void main() async{
       query.$and(query.$eq('Op1006d209f4729f6349d756739dd700', field: '_id')),
     ]);
 
-  final data = await events.findOne(where);
+  final data = await events.findOne(filter: where);
 
   print(data);
 

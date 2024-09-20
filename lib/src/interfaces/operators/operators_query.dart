@@ -21,6 +21,7 @@ abstract interface class OperatorsQuery {
 
   Query $exists(String field, [bool value = false]);
 
+  /// https://www.mongodb.com/pt-br/docs/manual/reference/operator/query/regex/
   Query $regex(String field, RegExp regExp);
 
 }

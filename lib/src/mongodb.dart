@@ -155,7 +155,7 @@ final class Mongodb {
     );
   }
 
-  Future<Mongodb> connectInLocalhost({
+  static Future<Mongodb> connectInLocalhost({
     required String dataBaseName,
     int port = 27017, 
   }) async{

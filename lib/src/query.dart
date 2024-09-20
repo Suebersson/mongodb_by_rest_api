@@ -335,6 +335,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
     return this;
   }
   
+  /// https://www.mongodb.com/pt-br/docs/manual/reference/operator/query/regex/
   @override
   Query $regex(String field, RegExp regExp) {
     operators.update(
