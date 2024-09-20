@@ -13,7 +13,7 @@ final class UriMethods {
     required this.aggregate,
   });
 
-  factory UriMethods(String endpoint) {
+  factory UriMethods(final String endpoint) {
     return UriMethods._(
       findOne: Uri.parse('$endpoint/action/findOne'), // post
       find: Uri.parse('$endpoint/action/find'), // post

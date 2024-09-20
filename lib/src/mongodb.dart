@@ -1,9 +1,11 @@
 import 'dart:typed_data' show Uint8List;
 
-import './collection.dart';
+import './interfaces/collection.dart';
+import './localhost/collection_for_localhost.dart';
+import './rest_api/collection_for_rest_api.dart';
 import './uri_methods.dart';
 import './exception.dart';
-import 'localhost/mongodb_localhost.dart';
+import './localhost/mongodb_localhost.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -17,7 +19,7 @@ import 'localhost/mongodb_localhost.dart';
 
 final class Mongodb {
   
-  Mongodb({
+  Mongodb._({
     required this.endpoint,
     required this.headers,
     required this.source,
@@ -47,7 +49,7 @@ final class Mongodb {
     required String cluster, 
     required String dataBaseName,
   }) {
-    return Mongodb(
+    return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
         'Content-Type': 'application/json',
@@ -69,7 +71,7 @@ final class Mongodb {
     required String cluster, 
     required String dataBaseName,
   }) {
-    return Mongodb(
+    return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
         'Content-Type': 'application/json',
@@ -92,7 +94,7 @@ final class Mongodb {
     required String cluster, 
     required String dataBaseName,
   }) {
-    return Mongodb(
+    return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
         'Content-Type': 'application/json',
@@ -115,7 +117,7 @@ final class Mongodb {
     required String cluster, 
     required String dataBaseName,
   }) {
-    return Mongodb(
+    return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
         'Content-Type': 'application/json',
@@ -138,7 +140,7 @@ final class Mongodb {
     required String cluster, 
     required String dataBaseName,
   }) {
-    return Mongodb(
+    return Mongodb._(
       endpoint: endpoint,
       secretKeyBytes: secretKeyBytes,
       signPayload: true,
@@ -159,8 +161,7 @@ final class Mongodb {
     required String dataBaseName,
     int port = 27017, 
   }) async{
-
-    return Mongodb(
+    return Mongodb._(
       endpoint: 'http://localhost:$port/$dataBaseName',
       signPayload: false,
       headers: Map.unmodifiable({
@@ -173,10 +174,15 @@ final class Mongodb {
       }),
       localhost: await MongodbLocalhost.connect(port),
     );
-
   }
 
-  Collection collection(String name) => Collection(name: name, db: this);
+  Collection collection(final String name) {
+    if (localhost is MongodbLocalhost) {
+      return CollectionForLocalhost(name: name, db: this);
+    } else {
+      return CollectionForRestApi(name: name, db: this);
+    }
+  }
 
   Future<void> createCollections(List<Collection> list) async{
 

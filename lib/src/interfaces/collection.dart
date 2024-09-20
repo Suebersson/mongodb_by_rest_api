@@ -1,7 +1,11 @@
+import '../mongodb.dart';
 import '../mongodb_request_data.dart';
 
-abstract interface class CollectionMethods {
-  
+abstract interface class Collection {
+
+  String get name; 
+  Mongodb get db;
+
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/findOne
   Future<List<Map<String, dynamic>>> find({
     dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,});
@@ -37,4 +41,11 @@ abstract interface class CollectionMethods {
 
   Future<int> amountOfDocuments([Map<String, dynamic>? match]);
   
+}
+
+final class CollectionExeception implements Exception {
+  final String message;
+  const CollectionExeception(this.message);
+  @override
+  String toString() => message;
 }

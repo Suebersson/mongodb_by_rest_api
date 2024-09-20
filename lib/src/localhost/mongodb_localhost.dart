@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import './exception.dart';
+import '../exception.dart';
 import './mongodb_handler.dart';
 
 class MongodbLocalhost {
@@ -54,8 +54,9 @@ class MongodbLocalhost {
         name: '$MongodbLocalhost > connectInDataBase',
         stackTrace: stackTrace,
       );
-      throw MongoDBLocalhostExeception(message);
+      throw MongoDBExeception(message);
     }
+
   }
 
   void sendRequest() {

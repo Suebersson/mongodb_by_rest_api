@@ -1,32 +1,34 @@
 import 'dart:typed_data' show Uint8List;
 import 'package:crypto/crypto.dart';
 
-import './interfaces/collection_methods.dart';
-import './mongodb.dart';
-import './converters/extension.dart';
-import './client_service.dart';
-import './mongodb_request_result.dart';
-import './mongodb_request_data.dart';
+import '../client_service.dart';
+import '../converters/extension.dart';
+import '../interfaces/collection.dart';
+import '../mongodb.dart';
+import '../mongodb_request_data.dart';
+import '../mongodb_request_result.dart';
 
-final class Collection implements CollectionMethods {
-  
-  Collection._({
+final class CollectionForRestApi implements Collection {
+
+  CollectionForRestApi._({
     required this.name, 
     required this.db,
   });
 
-  factory Collection({required String name, required Mongodb db}) {
+  @override
+  final String name; 
+  @override
+  final Mongodb db;
+  
+  factory CollectionForRestApi({required String name, required Mongodb db}) {
     if (db.signPayload && db.secretKeyBytes is! Uint8List) {
       throw const CollectionExeception('Defina a chave secreta[secretKeyBytes] para '
         'assinatura da payload');
     } else {
-      return Collection._(name: name, db: db);
+      return CollectionForRestApi._(name: name, db: db);
     }
   }
 
-  final String name; 
-  final Mongodb db;
-  
   Map<String, dynamic> get sourceRequest => {
     ...db.source,
     'collection': name,
@@ -340,11 +342,4 @@ final class Collection implements CollectionMethods {
 
   }
   
-}
-
-final class CollectionExeception implements Exception {
-  final String message;
-  const CollectionExeception(this.message);
-  @override
-  String toString() => message;
 }
