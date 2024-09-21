@@ -22,58 +22,58 @@ class CollectionForLocalhost implements Collection {
 
   }
 
-  T _generateException<T>(String message) => throw CollectionExeception(message);
+  T _generateException<T>(final String message) => throw CollectionExeception(message);
 
   @override
   Future<List<Map<String, dynamic>>> aggregate(List<Map<String, dynamic>> pipeline) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<Deleted> deleteMany(dynamic filter) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<Deleted> deleteOne(dynamic filter) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<List<Map<String, dynamic>>> find({
     dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,}) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<Map<String, dynamic>?> findOne({
     required dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort,}) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<InsertedMany> insertMany(List<Map<String, dynamic>> documents) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<InsertedOne> insertOne(Map<String, dynamic> document) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<Updated> updateMany({required dynamic filter, required dynamic update, bool? upsert}) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<Updated> updateOne({required dynamic filter, required dynamic update, bool? upsert}) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
 
   @override
   Future<int> amountOfDocuments([Map<String, dynamic>? match]) async{
-    throw UnimplementedError();
+    throw const CollectionExeception('funções incompleta');
   }
   
 }

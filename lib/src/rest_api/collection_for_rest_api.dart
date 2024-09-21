@@ -55,7 +55,7 @@ final class CollectionForRestApi implements Collection {
     ).convert(payloadBytes).toString(); 
   }
 
-  T _generateException<T>(String message) => throw CollectionExeception(message);
+  T _generateException<T>(final String message) => throw CollectionExeception(message);
 
   late final Uri 
     _uriFindOne = db.uriMethods.findOne, // post
