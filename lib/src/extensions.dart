@@ -9,6 +9,28 @@ extension ComplementMongoDBForData on Map<String, dynamic> {
     }
   }
 
+  void addQueryFieldWithTest({
+    required bool test, required String key, required dynamic value,}) {
+    if (test) {
+      update(
+        key, (_) => value,
+        ifAbsent: () => value,
+      );
+    }
+  }
+
+  // https://www.mongodb.com/pt-br/docs/manual/reference/operator/update/positional/
+  //
+  /// O operador $ posicional identifica um elemento em uma array para atualizar sem 
+  /// especificar explicitamente a posição do elemento na array
+  Map<String, dynamic> $(final String arrayName) {
+    final Map<String, dynamic> data = {};
+    forEach((key, value) {
+      data.addAll({'$arrayName.\$.$key': value});
+    },);
+    return data;
+  }
+
 }
 
 extension ComplementMongoDBForListString on List<String> {
