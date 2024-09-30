@@ -132,6 +132,7 @@ final class MongoDBRequestData {
 final class MongoDBRequestDataExeception implements Exception {
   final String message;
   const MongoDBRequestDataExeception(this.message);
+  static T generate<T>(final String message) => throw MongoDBRequestDataExeception(message); 
   @override
   String toString() => message;
 }

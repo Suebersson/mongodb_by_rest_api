@@ -22,8 +22,6 @@ class CollectionForLocalhost implements Collection {
 
   }
 
-  T _generateException<T>(final String message) => throw CollectionExeception(message);
-
   @override
   Future<List<Map<String, dynamic>>> aggregate(List<Map<String, dynamic>> pipeline) async{
     throw const CollectionExeception('funções incompleta');

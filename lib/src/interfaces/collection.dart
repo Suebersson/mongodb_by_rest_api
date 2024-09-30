@@ -46,6 +46,7 @@ abstract interface class Collection {
 final class CollectionExeception implements Exception {
   final String message;
   const CollectionExeception(this.message);
+  static T generate<T>(final String message) => throw CollectionExeception(message); 
   @override
   String toString() => message;
 }

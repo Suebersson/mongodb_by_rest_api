@@ -50,12 +50,10 @@ final class CollectionForRestApi implements Collection {
     // HMAC-SHA256-Hex
     return Hmac(
       sha256, 
-      db.secretKeyBytes ?? _generateException<Uint8List>('A chave secreta[secretKeyBytes] para '
+      db.secretKeyBytes ?? CollectionExeception.generate<Uint8List>('A chave secreta[secretKeyBytes] para '
         'assinatura da payload não foi definida'),
     ).convert(payloadBytes).toString(); 
   }
-
-  T _generateException<T>(final String message) => throw CollectionExeception(message);
 
   late final Uri 
     _uriFindOne = db.uriMethods.findOne, // post

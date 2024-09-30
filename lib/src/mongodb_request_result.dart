@@ -25,12 +25,13 @@ final class MongoDBRequestResult {
       final String message = 'Erro ao tentar definir/atribuir um objeto em uma '
         'variavel/atributo com tipo diferente';
       log(
-        message,
+        '$message\n\n\nbody: $body',
         name: '$MongoDBRequestResult > bodyData',
         error: error,
         stackTrace: stackTrace, 
       );
-      throw MongoDBRequestResultExeception(message);
+      // throw MongoDBRequestResultExeception(message);
+      return {};
     } on ConvertJsonExeception catch (error, stackTrace) {
       log(
         error.message,
@@ -43,12 +44,13 @@ final class MongoDBRequestResult {
     } catch (error, stackTrace) {
       final String message = 'Erro não tratado ao tentar converter o json[body] para uma Map<String, dynamic>';
       log(
-        message,
+        '$message\n\n\nbody: $body',
         name: '$MongoDBRequestResult > bodyData',
         error: error,
         stackTrace: stackTrace, 
       );
-      throw MongoDBRequestResultExeception(message);
+      // throw MongoDBRequestResultExeception(message);
+      return {};
     }
   }
 
@@ -119,6 +121,7 @@ final class MongoDBRequestResult {
 final class MongoDBRequestResultExeception implements Exception {
   final String message;
   const MongoDBRequestResultExeception(this.message);
+  static T generate<T>(final String message) => throw MongoDBRequestResultExeception(message); 
   @override
   String toString() => message;
 }
