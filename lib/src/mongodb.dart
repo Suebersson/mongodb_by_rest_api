@@ -1,3 +1,4 @@
+import 'dart:convert' show Encoding, utf8;
 import 'dart:typed_data' show Uint8List;
 
 import './interfaces/collection.dart';
@@ -42,6 +43,9 @@ final class Mongodb {
 
   final MongodbLocalhost? localhost;
 
+  /// Codificação padrão para leitura dos dados recebidos
+  static Encoding encoding = Encoding.getByName('utf-8') ?? utf8;
+
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#bearer-authentication
   factory Mongodb.authentication({
     required String authentication, 
@@ -55,6 +59,7 @@ final class Mongodb {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Access-Control-Request-Headers': '*',
+        'User-Agent': 'Dart for MongoDB by rest API',
         'Authentication': authentication,
       }), 
       source: Map.unmodifiable({
@@ -77,6 +82,7 @@ final class Mongodb {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Access-Control-Request-Headers': '*',
+        'User-Agent': 'Dart for MongoDB by rest API',
         'api-key': apiKey,
       }), 
       source: Map.unmodifiable({
@@ -100,6 +106,7 @@ final class Mongodb {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Access-Control-Request-Headers': '*',
+        'User-Agent': 'Dart for MongoDB by rest API',
         'email': email,
         'password': password,
       }), 
@@ -123,6 +130,7 @@ final class Mongodb {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Access-Control-Request-Headers': '*',
+        'User-Agent': 'Dart for MongoDB by rest API',
         'jwtTokenString': jwtTokenString,
       }), 
       source: Map.unmodifiable({
@@ -148,6 +156,7 @@ final class Mongodb {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Access-Control-Request-Headers': '*',
+        'User-Agent': 'Dart for MongoDB by rest API',
         'Endpoint-Signature': 'sha256=...',
       }), 
       source: Map.unmodifiable({
@@ -167,6 +176,7 @@ final class Mongodb {
       headers: Map.unmodifiable({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'User-Agent': 'Dart for MongoDB by rest API',
       }),
       source: Map.unmodifiable({
         'database': dataBaseName,

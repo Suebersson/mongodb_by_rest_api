@@ -1,18 +1,19 @@
 import 'dart:async' show FutureOr;
 import 'dart:io' show SocketException;
-import 'dart:convert' show Encoding;
+import 'dart:convert';
 import 'dart:developer' show log;
 import 'package:http/http.dart' as http;
 
 import './mongodb_request_result.dart';
+import './mongodb.dart';
 
 abstract final class ClientService {
 
-  static String getName = '$ClientService.get';
+  static final String methodGetName = '$ClientService.get';
   static Future<MongoDBRequestResult> get({required Uri uri, Map<String, String>? headers}) {
 
     return _tryRequest(
-      name: getName, 
+      name: methodGetName, 
       request: () async{
         
         final http.Response response = await http.get(uri, headers: headers);
@@ -29,12 +30,12 @@ abstract final class ClientService {
 
   }
 
-  static String postName = '$ClientService.post';
+  static final String methodPostName = '$ClientService.post';
   static Future<MongoDBRequestResult> post({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: postName, 
+      name: methodPostName, 
       request: () async{
 
         final http.Response response = await http.post(
@@ -44,10 +45,12 @@ abstract final class ClientService {
           encoding: encoding,
         );
 
+        final String responseBody = Mongodb.encoding.decode(response.bodyBytes);
+
         return MongoDBRequestResult(
           success: true, 
           statusCode: response.statusCode, 
-          body: response.body, 
+          body: responseBody, 
           headers: response.headers,
         );
 
@@ -56,12 +59,12 @@ abstract final class ClientService {
 
   }
 
-  static String putName = '$ClientService.put';
+  static final String methodPutName = '$ClientService.put';
   static Future<MongoDBRequestResult> put({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: putName, 
+      name: methodPutName, 
       request: () async{
         
         final http.Response response = await http.put(
@@ -71,10 +74,12 @@ abstract final class ClientService {
           encoding: encoding,
         );
 
+        final String responseBody = Mongodb.encoding.decode(response.bodyBytes);
+
         return MongoDBRequestResult(
           success: true, 
           statusCode: response.statusCode, 
-          body: response.body, 
+          body: responseBody, 
           headers: response.headers,
         );
 
@@ -83,12 +88,12 @@ abstract final class ClientService {
 
   }
 
-  static String deleteName = '$ClientService.delete';
+  static final String methodDeleteName = '$ClientService.delete';
   static Future<MongoDBRequestResult> delete({
     required Uri uri, Object? body, Map<String, String>? headers, Encoding? encoding,}) {
 
     return _tryRequest(
-      name: deleteName,
+      name: methodDeleteName,
       request: () async{
         
         final http.Response response = await http.delete(
@@ -98,10 +103,12 @@ abstract final class ClientService {
           encoding: encoding,
         );
 
+        final String responseBody = Mongodb.encoding.decode(response.bodyBytes);
+
         return MongoDBRequestResult(
           success: true, 
           statusCode: response.statusCode, 
-          body: response.body, 
+          body: responseBody, 
           headers: response.headers,
         );
 
@@ -110,11 +117,11 @@ abstract final class ClientService {
 
   }
 
-  static String headName = '$ClientService.head';
+  static final String methodHeadName = '$ClientService.head';
   static Future<MongoDBRequestResult> head({required Uri uri, Map<String, String>? headers,}) {
 
     return _tryRequest(
-      name: headName, 
+      name: methodHeadName, 
       request: () async{
         
         final http.Response response = await http.head(
