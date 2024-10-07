@@ -13,6 +13,9 @@ environment:
 dependencies:
   crypto: ^3.0.5
   http: ^1.2.2
+  convert_json:
+    git:
+      url: https://github.com/Suebersson/convert_json.git
 
 dev_dependencies:
   lints: ^4.0.0

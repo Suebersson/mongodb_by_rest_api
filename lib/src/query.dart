@@ -1,11 +1,11 @@
 import 'dart:typed_data' show Uint8List;
+import 'package:convert_json/convert_json_lib.dart' show ToJson;
 
 import './converters/extension.dart';
 import './interfaces/operators/operators_query.dart';
 import './interfaces/operators/operators_update.dart';
 import './interfaces/operators/operators_aggregation.dart';
 import './id_field.dart';
-import 'converters/convert_json.dart';
 
 Query get query => Query();
 
