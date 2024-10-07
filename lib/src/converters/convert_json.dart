@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import '../query.dart';
-
 abstract final class ConvertJson {
 
   static final RegExp intPattern = RegExp('^[0-9]{1,}\$');
@@ -50,49 +48,57 @@ abstract final class ConvertJson {
   ///
   /// É uma [Map] ou uma [List] com instâncias de [Object], essa função deve ser usada com cuidado 
   /// e não dispensa o uso de tratamentos de erro onde ela será usada
-  static String encode(Object object) {
+  static String encode(Object object, {List<ObjectTreatment>? treatments}) {
     return json.encode(
       object, 
       toEncodable: (dynamic object) {
+
+        if (treatments is List<ObjectTreatment> && treatments.isNotEmpty) {
+          for (final ObjectTreatment treatment in treatments) {
+            if (treatment.test.call(object)) {
+              return treatment.treat.call(object);
+            }
+          }
+        }
+
         if (object is Enum) {
           return object.toString();
-        } else if (object is DateTime) {
-          // return object.toIso8601String();
-          return {'\$date': object.toIso8601String()};
-        } else if (object is Query) {
-          return object.operators;
-        } else if(object is RegExp) {
-          // https://www.mongodb.com/pt-br/docs/v6.0/reference/operator/query/regex/
-          final Map<String, String> regex = {'\$regex': object.pattern};
-          if (object.isDotAll) {
-            regex.update(
-              '\$options', 
-              (options) => options += 's',
-              ifAbsent: () => 's',
-            );
-          }
-          if (!object.isCaseSensitive) {
-            regex.update(
-              '\$options', 
-              (options) => options += 'i',
-              ifAbsent: () => 'i',
-            );
-          }
-          if (object.isMultiLine) {
-            regex.update(
-              '\$options', 
-              (options) => options += 'm',
-              ifAbsent: () => 'm',
-            );
-          }
-          if (object.isUnicode) {
-            regex.update(
-              '\$options', 
-              (options) => options += 'u',
-              ifAbsent: () => 'u',
-            );
-          }
-          return regex;
+        } else if (object is ToJson) {
+          return object.toMap;
+        // } else if (object is DateTime) {
+        //   return {'\$date': object.toIso8601String()};
+        // } else if(object is RegExp) {
+        //   // https://www.mongodb.com/pt-br/docs/v6.0/reference/operator/query/regex/
+        //   final Map<String, String> regex = {'\$regex': object.pattern};
+        //   if (object.isDotAll) {
+        //     regex.update(
+        //       '\$options', 
+        //       (options) => options += 's',
+        //       ifAbsent: () => 's',
+        //     );
+        //   }
+        //   if (!object.isCaseSensitive) {
+        //     regex.update(
+        //       '\$options', 
+        //       (options) => options += 'i',
+        //       ifAbsent: () => 'i',
+        //     );
+        //   }
+        //   if (object.isMultiLine) {
+        //     regex.update(
+        //       '\$options', 
+        //       (options) => options += 'm',
+        //       ifAbsent: () => 'm',
+        //     );
+        //   }
+        //   if (object.isUnicode) {
+        //     regex.update(
+        //       '\$options', 
+        //       (options) => options += 'u',
+        //       ifAbsent: () => 'u',
+        //     );
+        //   }
+        //   return regex;
         } else {
           // Exeception que será emitida se o objeto for icompatível para o formato 
           // JSON [JsonUnsupportedObjectError] caso essa função seja defina
@@ -144,6 +150,17 @@ abstract final class ConvertJson {
     return json.replaceAll('"{\\"', '{"').replaceAll('\\"}"', '"}').replaceAll('\\"', '"');
   }
 
+}
+
+final class ObjectTreatment {
+  const ObjectTreatment({required this.test, required this.treat});
+  final bool Function(dynamic) test;
+  final Object? Function(dynamic) treat;
+}
+
+abstract interface class ToJson {
+  Map<String, dynamic> get toMap;
+  String get toJson;
 }
 
 final class ConvertJsonExeception implements Exception {

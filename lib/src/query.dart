@@ -4,14 +4,17 @@ import './converters/extension.dart';
 import './interfaces/operators/operators_query.dart';
 import './interfaces/operators/operators_update.dart';
 import './interfaces/operators/operators_aggregation.dart';
-import 'id_field.dart';
+import './id_field.dart';
+import 'converters/convert_json.dart';
 
 Query get query => Query();
 
-final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregation {
+final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregation, ToJson {
 
-  late final Map<String, dynamic> operators = {};
-  String get toJson => operators.toJson;
+  @override
+  late final Map<String, dynamic> toMap = {};
+  @override
+  String get toJson => toMap.toJson;
   Uint8List get toBytes => toJson.utf8ToBytes;
 
   // Objetos esperados [List] ou [Map] para criar a query
@@ -33,13 +36,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $eq(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$eq': value}, //value,
         ifAbsent: () => {'\$eq': value}, //value,
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$eq', 
         (_) => value,
         ifAbsent: () => value,
@@ -51,13 +54,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $gt(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$gt': value},
         ifAbsent: () => {'\$gt': value},
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$gt', 
         (_) => value,
         ifAbsent: () => value,
@@ -69,13 +72,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $gte(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$gte': value},
         ifAbsent: () => {'\$gte': value},
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$gte', 
         (_) => value,
         ifAbsent: () => value,
@@ -86,7 +89,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   
   @override
   Query $in(String field, List<dynamic> value) {
-    operators.update(
+    toMap.update(
       field, 
       (_) => {'\$in': value},
       ifAbsent: () => {'\$in': value},
@@ -97,13 +100,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $lt(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$lt': value},
         ifAbsent: () => {'\$lt': value},
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$lt', 
         (_) => value,
         ifAbsent: () => value,
@@ -115,13 +118,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $lte(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$lte': value},
         ifAbsent: () => {'\$lte': value},
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$lte', 
         (_) => value,
         ifAbsent: () => value,
@@ -133,13 +136,13 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $ne(dynamic value, {String? field}) {
     if (field is String) {
-      operators.update(
+      toMap.update(
         field, 
         (_) => {'\$ne': value},
         ifAbsent: () => {'\$ne': value},
       );
     } else {
-      operators.update(
+      toMap.update(
         '\$ne', 
         (_) => value,
         ifAbsent: () => value,
@@ -157,7 +160,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   /// print(where.freeJson); // [{"tags":{"$nin":["school"]}},{"$set":{"exclude":true}}]
   @override
   Query $nin(String field, List<dynamic> value) {
-    operators.update(
+    toMap.update(
       field, 
       (_) => {'\$nin': value},
       ifAbsent: () => {'\$nin': value},
@@ -168,10 +171,10 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $and(Query and) {
 
-    final List<Map<String, dynamic>> search = and.operators.entries
+    final List<Map<String, dynamic>> search = and.toMap.entries
       .map((e) => {e.key: e.value}).toList();
 
-    operators.update(
+    toMap.update(
       '\$and', (value) {
         (value as List).addAll(search);
         return value;
@@ -185,7 +188,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   
   @override
   Query $nor(List<dynamic> values) {
-    operators.update(
+    toMap.update(
       '\$nor', (_) => values,
       ifAbsent: () => values,
     );
@@ -199,7 +202,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
     //
     // final Query where = query.$not('item', '/^p.*/'); 
     // print(where.filterJson); // {"item":{"$not":"/^p.*/"}}
-    operators.update(
+    toMap.update(
       field, 
       (_) => {'\$not': value},
       ifAbsent: () => {'\$not': value},
@@ -218,9 +221,9 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   @override
   Query $or(List<Query> querys) {
 
-    final List<Map<String, dynamic>> search = querys.map((e) => e.operators).toList();
+    final List<Map<String, dynamic>> search = querys.map((e) => e.toMap).toList();
 
-    operators.update(
+    toMap.update(
       '\$or', (value) {
         (value as List).addAll(search);
         return value;
@@ -234,7 +237,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
 
   ///  Campos requeridos no documento
   Query $projection(List<String> fields) {
-    operators
+    toMap
       ..clear()
       ..addAll({for (String key in fields) key: 1})
       ..putIfAbsent(IdField.withUnderscore, () => 0);
@@ -243,7 +246,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
 
   /// reordenar os campos
   Query $sort(List<String> fields) {
-    operators
+    toMap
       ..clear()
       ..addAll({for (String key in fields) key: 1});
     return this;
@@ -259,7 +262,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   /// {"title":{"$exists":false}}
   @override
   Query $exists(String field, [bool value = false]) {
-    operators.update(
+    toMap.update(
       field, 
       (_) => {'\$exists': value},
       ifAbsent: () => {'\$exists': value},
@@ -274,7 +277,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   /// print(where.filterJson); // {"carrier.fee":{"$gt":2},"$set":{"price":15.89}}
   @override
   Query $set(Map<String, dynamic> data) {
-    operators.update(
+    toMap.update(
       '\$set', 
       (_) => data,
       ifAbsent: () => data,
@@ -284,7 +287,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
 
   @override
   Query $inc({required String field, value}) {
-    operators.update(
+    toMap.update(
       '\$inc', 
       (data) {
         (data as Map<String, dynamic>).addAll({field: value});
@@ -297,7 +300,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   
   @override
   Query $pull({required String field, value}) {
-    operators.update(
+    toMap.update(
       '\$pull', 
       (data) {
         (data as Map<String, dynamic>).addAll({field: value});
@@ -312,10 +315,10 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   ///   .$push(field: 'confirmedPresences', value: {'_id': 'gfnc4b78re7gt5d'})
   ///   .$inc(field: 'field', value: 1);
   /// 
-  /// print(where.operators.toJson); // {"$push":{"confirmedPresences":{"_id":"gfnc4b78re7gt5d"}},"$inc":{"field":1}}
+  /// print(where.toMap.toJson); // {"$push":{"confirmedPresences":{"_id":"gfnc4b78re7gt5d"}},"$inc":{"field":1}}
   @override
   Query $push({required String field, value}) {
-    operators.update(
+    toMap.update(
       '\$push', 
       (data) {
         (data as Map<String, dynamic>).addAll({field: value});
@@ -328,7 +331,7 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
 
   @override
   Query $match(Map<String, dynamic> data) {
-    operators.update(
+    toMap.update(
       '\$match', 
       (_) => data,
       ifAbsent: () => data,
@@ -339,12 +342,12 @@ final class Query implements OperatorsQuery, OperatorsUpdate, OperatorsAggregati
   /// https://www.mongodb.com/pt-br/docs/manual/reference/operator/query/regex/
   @override
   Query $regex(String field, RegExp regExp) {
-    operators.update(
+    toMap.update(
       field, 
       (_) => regExp,
       ifAbsent: () => regExp,
     );
     return this;
   }
-
+  
 }
