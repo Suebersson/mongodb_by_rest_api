@@ -44,7 +44,14 @@ final class Mongodb {
   final MongodbLocalhost? localhost;
 
   /// Codificação padrão para leitura dos dados recebidos
-  static Encoding encoding = Encoding.getByName('utf-8') ?? utf8;
+  static final Encoding encoding = Encoding.getByName('utf-8') ?? utf8;
+
+  static Map<String, String> get _preHeader => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Request-Headers': '*',
+    'User-Agent': 'Dart for MongoDB by rest API',
+  };
 
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#bearer-authentication
   factory Mongodb.authentication({
@@ -56,10 +63,7 @@ final class Mongodb {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Request-Headers': '*',
-        'User-Agent': 'Dart for MongoDB by rest API',
+        ..._preHeader,
         'Authentication': authentication,
       }), 
       source: Map.unmodifiable({
@@ -79,10 +83,7 @@ final class Mongodb {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Request-Headers': '*',
-        'User-Agent': 'Dart for MongoDB by rest API',
+        ..._preHeader,
         'api-key': apiKey,
       }), 
       source: Map.unmodifiable({
@@ -103,10 +104,7 @@ final class Mongodb {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Request-Headers': '*',
-        'User-Agent': 'Dart for MongoDB by rest API',
+        ..._preHeader,
         'email': email,
         'password': password,
       }), 
@@ -127,10 +125,7 @@ final class Mongodb {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Request-Headers': '*',
-        'User-Agent': 'Dart for MongoDB by rest API',
+        ..._preHeader,
         'jwtTokenString': jwtTokenString,
       }), 
       source: Map.unmodifiable({
@@ -153,10 +148,7 @@ final class Mongodb {
       secretKeyBytes: secretKeyBytes,
       signPayload: true,
       headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Request-Headers': '*',
-        'User-Agent': 'Dart for MongoDB by rest API',
+        ..._preHeader,
         'Endpoint-Signature': 'sha256=...',
       }), 
       source: Map.unmodifiable({
@@ -172,12 +164,7 @@ final class Mongodb {
   }) async{
     return Mongodb._(
       endpoint: 'http://localhost:$port/$dataBaseName',
-      signPayload: false,
-      headers: Map.unmodifiable({
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'User-Agent': 'Dart for MongoDB by rest API',
-      }),
+      headers: Map.unmodifiable(_preHeader),
       source: Map.unmodifiable({
         'database': dataBaseName,
         'port': port,
