@@ -1,6 +1,15 @@
 import './id_field.dart';
 
-extension ComplementMongoDBForData on Map<String, dynamic> {
+extension ComplementMongoDBForMapStringString on Map<String, String> {
+  Map<String, String> addUserAgent(String? userAgent) {
+    if (userAgent is String) {
+      update('user-agent', (_) => userAgent, ifAbsent: () => userAgent,);
+    }
+    return this;
+  }
+}
+
+extension ComplementMongoDBForMapStringDynamic on Map<String, dynamic> {
   
   void addUnderscoreInIdField() {
     if (containsKey(IdField.withoutUnderscore) && !containsKey(IdField.withUnderscore)) {

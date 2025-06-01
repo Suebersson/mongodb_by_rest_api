@@ -7,6 +7,7 @@ import './rest_api/collection_for_rest_api.dart';
 import './uri_methods.dart';
 import './exception.dart';
 import './localhost/mongodb_localhost.dart';
+import './extensions.dart';
 
 // Referências:
 // https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/
@@ -47,10 +48,10 @@ final class Mongodb {
   static final Encoding encoding = Encoding.getByName('utf-8') ?? utf8;
 
   static Map<String, String> get _preHeader => {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Access-Control-Request-Headers': '*',
-    'User-Agent': 'Dart for MongoDB by rest API',
+    'content-type': 'application/json',
+    'accept': 'application/json',
+    'access-control-request-headers': '*',
+    'user-agent': 'Dart for MongoDB by rest API',
   };
 
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#bearer-authentication
@@ -59,12 +60,13 @@ final class Mongodb {
     required String endpoint, 
     required String cluster, 
     required String dataBaseName,
+    String? userAgent,
   }) {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        ..._preHeader,
-        'Authentication': authentication,
+        ..._preHeader.addUserAgent(userAgent),
+        'authentication': authentication,
       }), 
       source: Map.unmodifiable({
         'database': dataBaseName,
@@ -79,11 +81,12 @@ final class Mongodb {
     required String endpoint, 
     required String cluster, 
     required String dataBaseName,
+    String? userAgent,
   }) {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        ..._preHeader,
+        ..._preHeader.addUserAgent(userAgent),
         'api-key': apiKey,
       }), 
       source: Map.unmodifiable({
@@ -100,11 +103,12 @@ final class Mongodb {
     required String endpoint, 
     required String cluster, 
     required String dataBaseName,
+    String? userAgent,
   }) {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        ..._preHeader,
+        ..._preHeader.addUserAgent(userAgent),
         'email': email,
         'password': password,
       }), 
@@ -121,11 +125,12 @@ final class Mongodb {
     required String endpoint, 
     required String cluster, 
     required String dataBaseName,
+    String? userAgent,
   }) {
     return Mongodb._(
       endpoint: endpoint, 
       headers: Map.unmodifiable({
-        ..._preHeader,
+        ..._preHeader.addUserAgent(userAgent),
         'jwtTokenString': jwtTokenString,
       }), 
       source: Map.unmodifiable({
@@ -142,13 +147,14 @@ final class Mongodb {
     required String endpoint, 
     required String cluster, 
     required String dataBaseName,
+    String? userAgent,
   }) {
     return Mongodb._(
       endpoint: endpoint,
       secretKeyBytes: secretKeyBytes,
       signPayload: true,
       headers: Map.unmodifiable({
-        ..._preHeader,
+        ..._preHeader.addUserAgent(userAgent),
         'Endpoint-Signature': 'sha256=...',
       }), 
       source: Map.unmodifiable({
@@ -161,10 +167,11 @@ final class Mongodb {
   static Future<Mongodb> connectInLocalhost({
     required String dataBaseName,
     int port = 27017, 
+    String? userAgent,
   }) async{
     return Mongodb._(
       endpoint: 'http://localhost:$port/$dataBaseName',
-      headers: Map.unmodifiable(_preHeader),
+      headers: Map.unmodifiable(_preHeader.addUserAgent(userAgent)),
       source: Map.unmodifiable({
         'database': dataBaseName,
         'port': port,
