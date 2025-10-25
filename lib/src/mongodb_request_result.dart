@@ -32,7 +32,7 @@ final class MongoDBRequestResult {
       );
       // throw MongoDBRequestResultExeception(message);
       return {};
-    } on ConvertJsonExeception catch (error, stackTrace) {
+    } on ConvertJsonException catch (error, stackTrace) {
       log(
         error.message,
         name: '$MongoDBRequestResult > bodyData',
