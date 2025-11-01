@@ -1,4 +1,4 @@
-import 'package:convert_json/convert_json_lib.dart';
+import 'package:convert_json/convert_json.dart';
 
 /// https://www.mongodb.com/docs/atlas/app-services/data-api/data-formats/
 abstract final class Json {

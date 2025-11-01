@@ -125,8 +125,9 @@ final class CollectionForRestApi implements Collection {
     return result.dataReceived.deleted;
 
   }
-  
+
   /// https://www.mongodb.com/pt-br/docs/atlas/app-services/data-api/openapi/#operation/find
+  /// https://www.mongodb.com/pt-br/docs/api/doc/atlas-data-api-v1/operation/operation-find
   @override
   Future<List<Map<String, dynamic>>> find({
     dynamic filter, Map<String, dynamic>? projection, Map<String, dynamic>? sort, int? limit,}) async{

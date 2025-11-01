@@ -1,6 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:typed_data' show Uint8List;
-import 'package:convert_json/convert_json_lib.dart';
+import 'package:convert_json/convert_json.dart';
 
 import './json.dart';
 

@@ -1,5 +1,5 @@
 import 'dart:typed_data' show Uint8List;
-import 'package:convert_json/convert_json_lib.dart' show ToJson;
+import 'package:convert_json/convert_json.dart' show ToJson;
 
 import './converters/extension.dart';
 import './interfaces/operators/operators_query.dart';

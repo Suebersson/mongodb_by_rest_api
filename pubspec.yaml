@@ -1,21 +1,18 @@
 name: mongodb_by_rest_api
 description: A starting point for Dart libraries or applications.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
-
-# package local que não será publicado
 publish_to: none
+# repository: https://github.com/Suebersson/mongodb_by_rest_api
 
 environment:
-  sdk: ^3.4.3
+  sdk: ^3.5.0
 
-# Add regular dependencies here.
+resolution: workspace
+
 dependencies:
-  crypto: ^3.0.5
-  http: ^1.4.0
+  crypto: ^3.0.6
+  http: ^1.5.0
   convert_json:
-    git:
-      url: https://github.com/Suebersson/convert_json.git
 
 dev_dependencies:
   lints: ^6.0.0

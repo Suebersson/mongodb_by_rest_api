@@ -18,6 +18,7 @@ import './extensions.dart';
 // https://www.mongodb.com/docs/atlas/app-services/mongodb/crud-and-aggregation-apis/#query-operators
 // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/
 // https://www.mongodb.com/docs/atlas/app-services/data-api/data-formats/
+// https://www.mongodb.com/pt-br/docs/api/doc/atlas-data-api-v1/authentication
 
 final class Mongodb {
   
@@ -76,6 +77,7 @@ final class Mongodb {
   }
 
   // https://www.mongodb.com/docs/atlas/app-services/data-api/authenticate/#api-key
+  // https://www.mongodb.com/pt-br/docs/atlas/app-services/authentication/api-key/#overview
   factory Mongodb.apiKey({
     required String apiKey, 
     required String endpoint, 

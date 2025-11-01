@@ -1,5 +1,5 @@
 import 'dart:developer' show log;
-import 'package:convert_json/convert_json_lib.dart';
+import 'package:convert_json/convert_json.dart';
 
 import './converters/extension.dart';
 import './mongodb_request_data.dart';
